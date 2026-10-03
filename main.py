@@ -59,6 +59,25 @@ input {
     border-radius: 8px !important;
 }
 
+/* Sidebar Select Box Text & Dropdown Fix for Streamlit Cloud */
+section[data-testid="stSidebar"] div[data-baseweb="select"] {
+    background-color: #ffffff !important;
+    border-radius: 8px !important;
+    border: 1px solid #cbd5e1 !important;
+}
+
+section[data-testid="stSidebar"] div[data-baseweb="select"] * {
+    color: #0f172a !important; /* Ensures selected value text is dark and readable */
+}
+
+div[data-baseweb="popover"] {
+    background-color: #ffffff !important;
+}
+
+div[data-baseweb="popover"] * {
+    color: #0f172a !important; /* Ensures dropdown options menu text is dark */
+}
+
 /* High-Contrast White Glass Cards & Metrics */
 [data-testid="metric-container"], .glass-card {
     background: #ffffff !important;
@@ -69,7 +88,7 @@ input {
 }
 
 [data-testid="stMetricValue"] {
-    color: #0284c7 !important; /* Vivid Blue */
+    color: #0284c7 !important;
     font-weight: 800 !important;
 }
 
@@ -101,27 +120,22 @@ input {
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
-/* Sidebar Styling */
+/* Sidebar Background Styling */
 section[data-testid="stSidebar"] {
     background-color: #1e293b !important; /* Deep Navy */
     border-right: 1px solid #334155 !important;
 }
-section[data-testid="stSidebar"] * {
+section[data-testid="stSidebar"] h1, 
+section[data-testid="stSidebar"] h2, 
+section[data-testid="stSidebar"] h3, 
+section[data-testid="stSidebar"] label {
     color: #f8fafc !important;
 }
 
-/* Sidebar Multi-select Tags Fix */
+/* Sidebar Multi-select Tags */
 span[data-baseweb="tag"] {
-    background-color: #3b82f6 !important; /* Clean Blue Tag */
+    background-color: #3b82f6 !important;
     color: #ffffff !important;
-}
-
-/* Navigation Selectbox */
-div[data-baseweb="select"] > div {
-    background-color: #334155 !important;
-    border: 1px solid #475569 !important;
-    color: #ffffff !important;
-    border-radius: 8px !important;
 }
 
 /* Tabs Styling */
