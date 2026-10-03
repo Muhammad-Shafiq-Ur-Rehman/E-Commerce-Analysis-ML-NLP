@@ -160,7 +160,7 @@ button[aria-selected="true"] p {
 # ----------------------------------------------------
 # 2. CACHED RESOURCE & MODEL LOADING
 # ----------------------------------------------------
-@st.cache_resource
+
 @st.cache_resource
 def load_nltk_resources():
     nltk.download('punkt', quiet=True)
@@ -213,25 +213,24 @@ def clean_text(text):
 st.markdown("""
 <div class="header-container">
     <div>
-        <h1 style='margin:0; font-size:2rem; color:#f8fafc;'>🛒 Enterprise E-Commerce Intelligence</h1>
-        <p style='margin:0; color:#94a3b8; font-size:0.9rem;'>AI-Driven Analytics & Predictive Decision Engine</p>
+        <h1 style='margin:0; font-size:2rem; color:#0f172a;'>🛒 Enterprise E-Commerce Intelligence</h1>
+        <p style='margin:0; color:#64748b; font-size:0.9rem;'>AI-Driven Analytics & Predictive Decision Engine</p>
     </div>
-    
 </div>
 """, unsafe_allow_html=True)
 
 st.sidebar.title("⚡ Navigation")
 page = st.sidebar.selectbox("Select Page", ["Dashboard", "Churn Prediction", "Sentiment Analysis"])
 
-# Apply high-contrast dark theme layout to Plotly
-# Apply light high-contrast theme layout to Plotly charts
+# Clean, Light High-Contrast Layout Defaults for Plotly
 plotly_layout_defaults = dict(
     paper_bgcolor='rgba(0,0,0,0)',
     plot_bgcolor='rgba(0,0,0,0)',
-    font=dict(color='#0f172a', size=12),
-    title=dict(font=dict(color='#0f172a', size=16)),
-    xaxis=dict(gridcolor='#e2e8f0', tickfont=dict(color='#334155')),
-    yaxis=dict(gridcolor='#e2e8f0', tickfont=dict(color='#334155'))
+    font=dict(color='#0f172a', family='Inter, sans-serif', size=12),
+    title=dict(font=dict(color='#0f172a', size=16, weight='bold')),
+    xaxis=dict(gridcolor='#e2e8f0', tickfont=dict(color='#334155'), title=dict(font=dict(color='#0f172a'))),
+    yaxis=dict(gridcolor='#e2e8f0', tickfont=dict(color='#334155'), title=dict(font=dict(color='#0f172a'))),
+    margin=dict(l=15, r=15, t=30, b=15)
 )
 
 # ====================================================
@@ -276,8 +275,8 @@ if page == "Dashboard":
         GROUP BY month ORDER BY month
         """
         monthly_df = pd.read_sql(monthly_query, conn)
-        fig_month = px.line(monthly_df, x="month", y="revenue", title="Monthly Revenue Trend", line_shape="spline")
-        fig_month.update_traces(line_color="#38bdf8", line_width=3)
+        fig_month = px.line(monthly_df, x="month", y="revenue", title="Monthly Revenue Trend", line_shape="spline", markers=True)
+        fig_month.update_traces(line_color="#0284c7", line_width=3, marker_size=7)
         fig_month.update_layout(**plotly_layout_defaults)
         st.plotly_chart(fig_month, use_container_width=True)
 
@@ -291,7 +290,7 @@ if page == "Dashboard":
             """
             city_df = pd.read_sql(city_query, conn)
             city_fig = px.bar(city_df, x="city", y="revenue", color="revenue", title="Top Cities by Revenue", color_continuous_scale="Blues")
-            city_fig.update_layout(**plotly_layout_defaults)
+            city_fig.update_layout(**plotly_layout_defaults, coloraxis_showscale=False)
             st.plotly_chart(city_fig, use_container_width=True)
 
         with col_right:
@@ -304,7 +303,7 @@ if page == "Dashboard":
             heat_df = pd.read_sql(heat_query, conn)
             if not heat_df.empty:
                 pivot = heat_df.pivot(index="category", columns="month_num", values="revenue").fillna(0)
-                heat_fig = px.imshow(pivot, title="Revenue Heatmap (Category vs Month)", color_continuous_scale="Viridis")
+                heat_fig = px.imshow(pivot, title="Revenue Heatmap (Category vs Month)", color_continuous_scale="Blues")
                 heat_fig.update_layout(**plotly_layout_defaults)
                 st.plotly_chart(heat_fig, use_container_width=True)
 
@@ -313,14 +312,14 @@ if page == "Dashboard":
         with col_c1:
             membership_query = "SELECT membership_type, COUNT(*) AS customers FROM customers GROUP BY membership_type"
             membership_df = pd.read_sql(membership_query, conn)
-            fig_mem = px.pie(membership_df, names="membership_type", values="customers", hole=0.4, title="Membership Distribution", color_discrete_sequence=px.colors.qualitative.Pastel)
+            fig_mem = px.pie(membership_df, names="membership_type", values="customers", hole=0.45, title="Membership Distribution", color_discrete_sequence=px.colors.qualitative.Set2)
             fig_mem.update_layout(**plotly_layout_defaults)
             st.plotly_chart(fig_mem, use_container_width=True)
 
         with col_c2:
             payment_query = "SELECT payment_method, COUNT(*) AS transactions FROM orders GROUP BY payment_method"
             payment_df = pd.read_sql(payment_query, conn)
-            fig_pay = px.pie(payment_df, names="payment_method", values="transactions", hole=0.4, title="Payment Method Distribution", color_discrete_sequence=px.colors.qualitative.Set3)
+            fig_pay = px.pie(payment_df, names="payment_method", values="transactions", hole=0.45, title="Payment Method Distribution", color_discrete_sequence=px.colors.qualitative.Pastel)
             fig_pay.update_layout(**plotly_layout_defaults)
             st.plotly_chart(fig_pay, use_container_width=True)
 
@@ -333,12 +332,12 @@ if page == "Dashboard":
         """
         cat_df = pd.read_sql(category_query, conn)
 
-        fig_cat = px.bar(cat_df, x="category", y="revenue", color="revenue", title="Category Revenue", color_continuous_scale="Purples")
-        fig_cat.update_layout(**plotly_layout_defaults)
+        fig_cat = px.bar(cat_df, x="category", y="revenue", color="revenue", title="Category Revenue", color_continuous_scale="Blues")
+        fig_cat.update_layout(**plotly_layout_defaults, coloraxis_showscale=False)
         st.plotly_chart(fig_cat, use_container_width=True)
 
         fig_ret = px.bar(cat_df, x="category", y="return_rate", color="return_rate", title="Return Rate by Category (%)", color_continuous_scale="Reds")
-        fig_ret.update_layout(**plotly_layout_defaults)
+        fig_ret.update_layout(**plotly_layout_defaults, coloraxis_showscale=False)
         st.plotly_chart(fig_ret, use_container_width=True)
 
         top_products_query = f"""
@@ -405,19 +404,22 @@ elif page == "Churn Prediction":
             gauge = go.Figure(go.Indicator(
                 mode="gauge+number",
                 value=probability * 100,
-                title={'text': "Churn Probability (%)", 'font': {'color': '#f8fafc'}},
-                number={'suffix': "%", 'font': {'color': '#f8fafc'}},
+                title={'text': "Churn Probability (%)", 'font': {'color': '#0f172a', 'size': 15, 'weight': 'bold'}},
+                number={'suffix': "%", 'font': {'color': '#0f172a', 'size': 42, 'family': 'Arial'}},
                 gauge={
-                    'axis': {'range': [0, 100], 'tickcolor': "#f8fafc"},
-                    'bar': {'color': "#ef4444" if probability >= 0.75 else "#f59e0b" if probability >= 0.40 else "#10b981"},
+                    'axis': {'range': [0, 100], 'tickcolor': "#475569", 'tickfont': {'color': '#334155'}},
+                    'bar': {'color': "#dc2626" if probability >= 0.75 else "#d97706" if probability >= 0.40 else "#059669"},
+                    'bgcolor': "#ffffff",
+                    'borderwidth': 1,
+                    'bordercolor': "#cbd5e1",
                     'steps': [
-                        {'range': [0, 40], 'color': 'rgba(16, 185, 129, 0.2)'},
-                        {'range': [40, 75], 'color': 'rgba(245, 158, 11, 0.2)'},
-                        {'range': [75, 100], 'color': 'rgba(239, 68, 68, 0.2)'}
+                        {'range': [0, 40], 'color': '#dcfce7'},
+                        {'range': [40, 75], 'color': '#fef9c3'},
+                        {'range': [75, 100], 'color': '#fee2e2'}
                     ]
                 }
             ))
-            gauge.update_layout(**plotly_layout_defaults)
+            gauge.update_layout(**plotly_layout_defaults, title_text="")
             st.plotly_chart(gauge, use_container_width=True)
 
         with col_g2:
@@ -425,7 +427,7 @@ elif page == "Churn Prediction":
             if probability >= 0.75:
                 st.error("🚨 **HIGH RISK CUSTOMER**\n\nImmediate retention intervention required.")
             elif probability >= 0.40:
-                st.warning("⚠️ **MEDIUM RISK CUSTOMER**\n\nTarget with promotional incentives.")
+                st.warning("⚠️️ **MEDIUM RISK CUSTOMER**\n\nTarget with promotional incentives.")
             else:
                 st.success("✅ **LOW RISK CUSTOMER**\n\nCustomer engagement is stable.")
 
@@ -509,22 +511,32 @@ elif page == "Sentiment Analysis":
                 conf_gauge = go.Figure(go.Indicator(
                     mode="gauge+number",
                     value=confidence * 100,
-                    number={'suffix': "%", 'font': {'color': '#f8fafc'}},
-                    title={'text': "Model Confidence", 'font': {'color': '#f8fafc'}},
+                    number={'suffix': "%", 'font': {'color': '#0f172a', 'size': 42, 'family': 'Arial'}},
+                    title={'text': "Model Confidence", 'font': {'color': '#0f172a', 'size': 15, 'weight': 'bold'}},
                     gauge={
-                        'axis': {'range': [0, 100], 'tickcolor': "#f8fafc"},
-                        'bar': {'color': '#3b82f6'},
-                        'steps': [{'range': [0, 100], 'color': 'rgba(59, 130, 246, 0.2)'}]
+                        'axis': {'range': [0, 100], 'tickcolor': "#475569", 'tickfont': {'color': '#334155'}},
+                        'bar': {'color': '#2563eb'},
+                        'bgcolor': "#ffffff",
+                        'borderwidth': 1,
+                        'bordercolor': "#cbd5e1",
+                        'steps': [{'range': [0, 100], 'color': '#dbeafe'}]
                     }
                 ))
-                conf_gauge.update_layout(**plotly_layout_defaults)
+                conf_gauge.update_layout(**plotly_layout_defaults, title_text="")
                 st.plotly_chart(conf_gauge, use_container_width=True)
 
             with col_s2:
                 st.subheader("Probability Distribution")
                 prob_df = pd.DataFrame({"Sentiment": classes, "Probability": probabilities})
-                fig_prob = px.bar(prob_df, x="Sentiment", y="Probability", color="Sentiment", text_auto=".2%", color_discrete_sequence=px.colors.qualitative.Bold)
-                fig_prob.update_layout(**plotly_layout_defaults)
+                fig_prob = px.bar(
+                    prob_df, 
+                    x="Sentiment", 
+                    y="Probability", 
+                    color="Sentiment", 
+                    text_auto=".2%", 
+                    color_discrete_sequence=['#7e22ce', '#10b981', '#2563eb']
+                )
+                fig_prob.update_layout(**plotly_layout_defaults, title_text="")
                 st.plotly_chart(fig_prob, use_container_width=True)
 
             st.markdown(f"**Processed NLP Tokens:** `{cleaned_review}`")
@@ -542,7 +554,7 @@ elif page == "Sentiment Analysis":
 # ----------------------------------------------------
 st.markdown("""
 <div class="footer">
-    AI-Powered E-Commerce Customer Intelligence System | Data Science Final Hackathon Project 2026<br>
+    AI-Powered E-Commerce Customer Intelligence System | Data Science Final Project<br>
     Built with Streamlit, SQL, Machine Learning, and Plotly
 </div>
 """, unsafe_allow_html=True)
