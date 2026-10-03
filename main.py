@@ -161,10 +161,13 @@ button[aria-selected="true"] p {
 # 2. CACHED RESOURCE & MODEL LOADING
 # ----------------------------------------------------
 @st.cache_resource
+@st.cache_resource
 def load_nltk_resources():
     nltk.download('punkt', quiet=True)
+    nltk.download('punkt_tab', quiet=True)
     nltk.download('stopwords', quiet=True)
     nltk.download('wordnet', quiet=True)
+    nltk.download('omw-1.4', quiet=True)
 
 load_nltk_resources()
 
